@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黄金多因子分析 Agent</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="logo">◆</span>
+    <div>
+      <h1>黄金多因子分析 Agent</h1>
+      <p>实时行情 · 财经日历 · 金十情报 · 研报知识库 · LangGraph 编排</p>
+    </div>
+  </div>
+  <div class="clock" id="clock">--:--:--</div>
+</header>
+<main>
+  <aside class="side">
+    <h2>关注品种</h2>
+    <button class="chip" data-q="帮我看看黄金 XAUUSD 现在什么价？">黄金 XAUUSD</button>
+    <button class="chip" data-q="白银 XAGUSD 现在什么价？">白银 XAGUSD</button>
+    <button class="chip" data-q="美原油 USOIL 现在什么价？">美原油 USOIL</button>
+    <button class="chip" data-q="美元人民币 USDCNH 现在什么价？">美元人民币 USDCNH</button>
+    <h2>行情速览</h2>
+    <div id="quotes" class="quotes"><p class="muted">正在连接金十实时行情…</p></div>
+  </aside>
+  <section class="chat">
+    <div class="messages" id="messages">
+      <div class="msg assistant">你好，我是黄金多因子分析 Agent。可以问我：<br>· 今天黄金怎么看？重点看非农、CPI 和美伊局势<br>· 白银现在什么价？<br>· 美联储利率决议对黄金有什么影响？</div>
+    </div>
+    <form class="inputbar" id="form">
+      <input id="input" placeholder="问我任何黄金 / 宏观问题…" autocomplete="off">
+      <button type="submit">发送</button>
+    </form>
+    <p class="disclaimer">本工具仅作信息梳理，不构成投资建议。</p>
+  </section>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>

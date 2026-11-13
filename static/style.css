@@ -1,0 +1,30 @@
+:root{--bg:#0d1117;--panel:#161b22;--border:#2b3240;--gold:#d4af37;--gold2:#e6c35c;--text:#e6edf3;--muted:#8b949e;--up:#3fb950;--down:#f85149;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:var(--panel);border-bottom:1px solid var(--border);}
+.brand{display:flex;align-items:center;gap:14px;}
+.logo{font-size:30px;color:var(--gold);}
+header h1{font-size:18px;font-weight:600;letter-spacing:1px;}
+header p{font-size:12px;color:var(--muted);margin-top:2px;}
+.clock{font-size:15px;color:var(--gold2);font-variant-numeric:tabular-nums;letter-spacing:1px;}
+main{flex:1;display:flex;min-height:0;}
+.side{width:240px;background:var(--panel);border-right:1px solid var(--border);padding:18px 14px;overflow-y:auto;}
+.side h2{font-size:12px;color:var(--gold);letter-spacing:2px;margin:16px 0 10px;}
+.chip{display:block;width:100%;text-align:left;background:#1c2330;border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:8px;margin-bottom:8px;cursor:pointer;font-size:13px;transition:.15s;}
+.chip:hover{border-color:var(--gold);color:var(--gold2);}
+.quotes{font-size:12px;color:var(--muted);line-height:1.6;}
+.quotes .q{background:#1c2330;border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-family:Consolas,monospace;word-break:break-all;color:var(--text);}
+.muted{color:var(--muted);}
+.chat{flex:1;display:flex;flex-direction:column;min-width:0;}
+.messages{flex:1;overflow-y:auto;padding:22px 26px;}
+.msg{max-width:76%;margin-bottom:14px;padding:12px 16px;border-radius:12px;line-height:1.65;font-size:14px;white-space:pre-wrap;word-break:break-word;}
+.msg.user{margin-left:auto;background:linear-gradient(135deg,#3a2f14,#4a3a16);border:1px solid #6b5520;color:#f5e9c4;}
+.msg.assistant{background:var(--panel);border:1px solid var(--border);}
+.msg.assistant.typing::after{content:"思考中…";color:var(--gold2);animation:blink 1s infinite;}
+@keyframes blink{50%{opacity:.4;}}
+.inputbar{display:flex;gap:10px;padding:14px 20px;border-top:1px solid var(--border);background:var(--panel);}
+.inputbar input{flex:1;background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-size:14px;outline:none;}
+.inputbar input:focus{border-color:var(--gold);}
+.inputbar button{background:var(--gold);color:#111;border:none;border-radius:10px;padding:0 22px;font-size:14px;font-weight:600;cursor:pointer;}
+.inputbar button:hover{background:var(--gold2);}
+.disclaimer{text-align:center;font-size:11px;color:var(--muted);padding-bottom:8px;background:var(--panel);}
