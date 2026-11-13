@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-"""共享的 BGE 中文 Embedding：ingest 与 retrieve 必须用同一模型，保证向量一致。"""
+"""共享的 BGE 中文 Embedding（惰性加载：避免启动就加载 torch）。"""
 import os
-
-from sentence_transformers import SentenceTransformer
 
 _MODEL_NAME = 'BAAI/bge-small-zh-v1.5'
 _model = None
@@ -12,6 +10,7 @@ def get_model():
     global _model
     if _model is None:
         os.environ.setdefault('HF_ENDPOINT', 'https://hf-mirror.com')
+        from sentence_transformers import SentenceTransformer
         _model = SentenceTransformer(_MODEL_NAME)
     return _model
 
