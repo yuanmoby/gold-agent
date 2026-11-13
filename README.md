@@ -19,40 +19,45 @@ gold-agent/
 ├─ graph.py           # LangGraph ReAct 状态图
 ├─ agent.py           # 统一分析接口
 ├─ cli.py             # 命令行入口
-├─ server.py          # FastAPI 后端
-├─ static/            # 前端（深色黄金主题）
-├─ render.yaml        # Render 一键部署配置
+├─ app_streamlit.py   # Streamlit 界面（可部署 Streamlit Cloud）
+├─ server.py          # FastAPI 后端 + 深色主题前端
+├─ render.yaml        # Render 部署配置（备用）
 └─ docs/              # 研报样例（RAG 数据源）
 ```
 
 ## 本地运行
 ```bash
-# 1) 基础依赖（Web / CLI）
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-# 2) 可选：RAG 依赖（要用研报检索才装，会下载 torch 与 BGE 模型）
+# 可选：RAG 依赖（要用研报检索才装，会下载 torch 与 BGE 模型）
 pip install -r requirements-rag.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-# 3) 配置密钥（.env，已生成；勿提交 Git）
-#    JIN10_TOKEN=...   DEEPSEEK_API_KEY=sk-...
+# 密钥：.env（已生成，勿提交 Git）
+#   JIN10_TOKEN=...   DEEPSEEK_API_KEY=sk-...
 
-# 4) RAG 入库（首次下载 BGE 中文模型，走国内镜像）
+# RAG 入库（首次下载 BGE 中文模型）
 python rag/ingest.py docs
 
-# 5) 命令行分析
+# 命令行
 python cli.py "帮我分析今天的黄金，重点看非农和CPI"
 
-# 6) 网页版
-python server.py   # 打开 http://127.0.0.1:8000
+# 网页版 A：Streamlit
+streamlit run app_streamlit.py
+
+# 网页版 B：FastAPI 深色主题
+python server.py
 ```
 
-## 部署到公网（Render，免费）
+## 部署到公网（Streamlit Community Cloud，免费 + 固定链接）
 1. 把本仓库推到 GitHub（已完成：github.com/yuanmoby/gold-agent）
-2. 打开 render.com，用 GitHub 登录 → New → Blueprint → 选本仓库，自动读取 render.yaml
-3. 在环境变量里填 `JIN10_TOKEN` 和 `DEEPSEEK_API_KEY`（不要写进代码）
-4. Deploy，几分钟后得到公网地址 `https://gold-agent-xxx.onrender.com`
+2. 打开 share.streamlit.io，用 GitHub 登录 → Create app
+3. 选仓库 gold-agent、分支 main、入口文件 **app_streamlit.py** → Deploy
+4. 在 Advanced settings → Secrets 里填：
+   `JIN10_TOKEN = 你的token`
+   `DEEPSEEK_API_KEY = sk-xxx`
+5. 几分钟后得到固定公网地址，形如 `https://yuanmoby-gold-agent.streamlit.app`
 
-> 说明：RAG 依赖已拆到 requirements-rag.txt，云端只装轻量依赖、不下载 torch；RAG 检索在云端无本地知识库时会返回「知识库为空」，属预期，核心行情/新闻/分析功能不受影响。
+> 说明：Streamlit 版复用同一个 Agent 后端；RAG 依赖已拆到 requirements-rag.txt，云端只装轻量依赖、不下载 torch。云端无本地知识库时 RAG 返回「知识库为空」，属预期，行情/新闻/六维分析不受影响。
 
 ## 设计决策（面试必讲）
 - 为什么用 LangGraph：状态图 + 条件边，把「LLM 决策 → 工具执行 → 回传」建模成图，可扩展、可断点。
