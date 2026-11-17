@@ -73,3 +73,7 @@ form.addEventListener('submit', async (e) => {
   }
   messages.scrollTop = messages.scrollHeight;
 });
+document.getElementById('clear').addEventListener('click', () => {
+  messages.innerHTML = '';
+  localStorage.removeItem('gold_agent_sid');
+});

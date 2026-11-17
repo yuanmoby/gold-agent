@@ -37,6 +37,11 @@ with st.sidebar:
     else:
         st.caption('点「刷新行情」查看实时价')
     st.caption('数据来自金十 MCP，实时更新')
+    st.subheader('对话')
+    if st.button('清空对话'):
+        st.session_state['session'] = ChatSession()
+        st.session_state['chat_history'] = []
+        st.rerun()
 
 # 多轮会话（短期记忆）：session_state 持久化
 if 'session' not in st.session_state:
