@@ -16,6 +16,15 @@ function clock() {
 }
 setInterval(clock, 1000); clock();
 
+function getSessionId() {
+  let sid = localStorage.getItem('gold_agent_sid');
+  if (!sid) {
+    sid = 's' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('gold_agent_sid', sid);
+  }
+  return sid;
+}
+
 async function loadQuotes() {
   try {
     const r = await fetch('/api/quotes');
@@ -53,7 +62,7 @@ form.addEventListener('submit', async (e) => {
     const r = await fetch('/api/chat', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({question: q})
+      body: JSON.stringify({question: q, session_id: getSessionId()})
     });
     const data = await r.json();
     typing.classList.remove('typing');

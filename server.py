@@ -7,20 +7,25 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from agent import ask
+from agent import ChatSession
 from tools import market
 
 ROOT = Path(__file__).resolve().parent
 app = FastAPI(title='黄金多因子分析 Agent')
 
+sessions = {}
+
 
 class ChatReq(BaseModel):
     question: str
+    session_id: str = 'default'
 
 
 @app.post('/api/chat')
 def chat(req: ChatReq):
-    return {'answer': ask(req.question)}
+    if req.session_id not in sessions:
+        sessions[req.session_id] = ChatSession()
+    return {'answer': sessions[req.session_id].chat(req.question)}
 
 
 @app.get('/api/quotes')

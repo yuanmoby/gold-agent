@@ -6,6 +6,7 @@ from typing import Annotated, TypedDict
 
 import requests
 from langgraph.graph import StateGraph, START, END
+from langgraph.errors import GraphRecursionError
 
 import config
 from tools import market, calendar, news, search
@@ -31,7 +32,10 @@ SYSTEM = """你是黄金多因子分析助手，必须做到：
 4. 涉及历史背景、过去走势成因时，用 retrieve_knowledge 查本地研报库。
 5. 必须覆盖六个维度：1)利率与货币 2)通胀 3)避险与情绪 4)供需 5)关联市场 6)资金持仓。
 6. 输出结构：先列行情与关键事实（带时间/数值），再逐维度给利多/利空判断，最后汇总多空，并明确列出仍缺失的数据。
-7. 最后必须注明：仅为因素梳理，不构成投资建议，无法预测走势。"""
+7. 输出前自检：六个维度是否都覆盖、数据是否都来自工具且真实、是否标出了缺失项；缺数据的维度要如实说缺，不得用猜测填充。
+8. 最后必须注明：仅为因素梳理，不构成投资建议，无法预测走势。"""
+
+MAX_STEPS = 15
 
 
 def _call_llm(messages):
@@ -106,9 +110,22 @@ builder.add_edge('tools', 'llm')
 graph = builder.compile()
 
 
-def analyze(question):
-    result = graph.invoke({'messages': [
-        {'role': 'system', 'content': SYSTEM},
-        {'role': 'user', 'content': question},
-    ]})
-    return result['messages'][-1].get('content', '')
+def run(messages):
+    """跑一次 ReAct 图，返回更新后的完整消息列表（含历史，供多轮记忆）。"""
+    try:
+        result = graph.invoke({'messages': messages}, config={'recursion_limit': MAX_STEPS})
+    except GraphRecursionError:
+        return messages + [{'role': 'assistant', 'content': '（分析步骤过多，已自动停止，请换个更具体的问题再问）'}]
+    return result['messages']
+
+
+def analyze(question, history=None):
+    """单次分析：把问题和历史一起喂给 Agent，返回 (答案, 更新后的完整消息列表)。"""
+    msgs = [{'role': 'system', 'content': SYSTEM}]
+    for m in (history or []):
+        if m.get('role') != 'system':
+            msgs.append(m)
+    msgs.append({'role': 'user', 'content': question})
+    out = run(msgs)
+    answer = out[-1].get('content', '') if out else ''
+    return answer, out
